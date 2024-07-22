@@ -1,8 +1,12 @@
 ### metaverse
 
-- [ ] character & animation
+- [ ] enviroment
+- [ ] character
+- [ ] animation
 - [ ] movement
-- [ ] lobby
+- [ ] server & lobby
+- [ ] movement replication
 - [ ] character custom
+- [ ] show player list
 - [ ] chat
 - [ ] interaction with objects
