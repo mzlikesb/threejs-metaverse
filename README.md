@@ -1,7 +1,7 @@
 ## to do
 
 - [x] environment
-- [ ] character
+- [x] character
 - [ ] animation
 - [ ] movement
 - [ ] server & lobby
