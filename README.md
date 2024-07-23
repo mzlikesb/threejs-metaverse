@@ -3,7 +3,8 @@
 - [x] environment
 - [x] character
 - [x] animation
-- [ ] movement
+- [x] movement
+- [ ] collision
 - [ ] server & lobby
 - [ ] movement replication
 - [ ] character custom
