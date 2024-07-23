@@ -1,9 +1,9 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/Addons.js';
-import { LoadModel, LoadAnimation } from './ModelLoader.js';
+import { LoadModel } from './ModelLoader.js';
 import { AddCubeMap, AddSphere} from './environment.js';
+import { CharacterLocomotion } from './Controls.js';
 import CatCafe from '../public/Models/cat_cafe_environment.glb';
-import idleAnimation from '../public/Animations/F_Standing_Idle_001.glb';
 
 const renderer = new THREE.WebGLRenderer();
 renderer.shadowMap.enabled = true;
@@ -11,10 +11,11 @@ renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.001, 10000);
-camera.position.set(0, 3, 0);
+camera.position.set(0, 3, 3);
 
 async function init() {
     const orbit = new OrbitControls(camera, renderer.domElement);
+    orbit.update();
 
     const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
     directionalLight.castShadow = true;
@@ -29,22 +30,26 @@ async function init() {
 
     await LoadModel(CatCafe, scene, {x:0,y:-0.12,z:0}, {x:0.01,y:0.01,z:0.01});
     const character = await LoadModel('https://models.readyplayer.me/669e0feb3d2df5297df26a07.glb', scene, {x:0, y:0, z:0});
-    const idle = await LoadAnimation(idleAnimation);
-    const mixers=[];
-    const mixer = new THREE.AnimationMixer(character.scene);
-    mixer.clipAction(idle[0]).play();
-    mixers.push(mixer);
+    const locomotion = new CharacterLocomotion(character.scene);
+    locomotion.initialize();
 
-    camera.position.z = 5;
-    orbit.update();
+    this.keyPressed={};
+    document.addEventListener('keydown', (event)=>{
+        (keyPressed)[event.key] = true;
+        //console.log(event);
+    });
+
+    document.addEventListener('keyup', (event)=>{
+        (keyPressed)[event.key] = false;
+    });
+    
     const clock = new THREE.Clock();
-
     function animate() {
         requestAnimationFrame(animate);
 
         const delta = clock.getDelta();
-        mixers.forEach((mixer) => mixer.update(delta));
-        
+        locomotion.update(camera, delta);
+
         renderer.render(scene, camera);
     }
 
