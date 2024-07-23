@@ -1,8 +1,9 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/Addons.js';
-import { LoadModel } from './ModelLoader.js';
+import { LoadModel, LoadAnimation } from './ModelLoader.js';
 import { AddCubeMap, AddSphere} from './environment.js';
 import CatCafe from '../public/Models/cat_cafe_environment.glb';
+import idleAnimation from '../public/Animations/F_Standing_Idle_001.glb';
 
 const renderer = new THREE.WebGLRenderer();
 renderer.shadowMap.enabled = true;
@@ -27,14 +28,23 @@ async function init() {
     AddSphere(scene, new THREE.Color(0x10C5D1), new THREE.Color(0xAF8F78));
 
     await LoadModel(CatCafe, scene, {x:0,y:-0.12,z:0}, {x:0.01,y:0.01,z:0.01});
-    await LoadModel('https://models.readyplayer.me/669e0feb3d2df5297df26a07.glb', scene, {x:0, y:0, z:0});
+    const character = await LoadModel('https://models.readyplayer.me/669e0feb3d2df5297df26a07.glb', scene, {x:0, y:0, z:0});
+    const idle = await LoadAnimation(idleAnimation);
+    const mixers=[];
+    const mixer = new THREE.AnimationMixer(character.scene);
+    mixer.clipAction(idle[0]).play();
+    mixers.push(mixer);
 
     camera.position.z = 5;
     orbit.update();
-
+    const clock = new THREE.Clock();
 
     function animate() {
         requestAnimationFrame(animate);
+
+        const delta = clock.getDelta();
+        mixers.forEach((mixer) => mixer.update(delta));
+        
         renderer.render(scene, camera);
     }
 

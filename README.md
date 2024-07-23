@@ -2,7 +2,7 @@
 
 - [x] environment
 - [x] character
-- [ ] animation
+- [x] animation
 - [ ] movement
 - [ ] server & lobby
 - [ ] movement replication
