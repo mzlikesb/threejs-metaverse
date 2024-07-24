@@ -28,10 +28,21 @@ async function init() {
     await AddCubeMap(scene);
     AddSphere(scene, new THREE.Color(0x10C5D1), new THREE.Color(0xAF8F78));
 
-    await LoadModel(CatCafe, scene, {x:0,y:-0.12,z:0}, {x:0.01,y:0.01,z:0.01});
+    const colliders =[];
+
+    const cafe = await LoadModel(CatCafe, scene, {x:0,y:-0.12,z:0}, {x:0.01,y:0.01,z:0.01});
+    colliders.push(cafe.scene);
+
     const character = await LoadModel('https://models.readyplayer.me/669e0feb3d2df5297df26a07.glb', scene, {x:0, y:0, z:0});
     const locomotion = new CharacterLocomotion(character.scene);
     locomotion.initialize();
+    
+    const geometry = new THREE.BoxGeometry( 1, 1, 1);
+    const material = new THREE.MeshBasicMaterial({color:0x222222, wireframe:true});
+    const box = new THREE.Mesh(geometry, material);
+    box.position.set(0,0.5,1.5);
+    scene.add(box);
+    colliders.push(box);
 
     this.keyPressed={};
     document.addEventListener('keydown', (event)=>{
@@ -48,7 +59,7 @@ async function init() {
         requestAnimationFrame(animate);
 
         const delta = clock.getDelta();
-        locomotion.update(camera, delta);
+        locomotion.update(camera, delta, colliders, scene);
 
         renderer.render(scene, camera);
     }

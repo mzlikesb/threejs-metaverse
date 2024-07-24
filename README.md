@@ -4,7 +4,6 @@
 - [x] character
 - [x] animation
 - [x] movement
-- [ ] collision
 - [ ] server & lobby
 - [ ] movement replication
 - [ ] character custom

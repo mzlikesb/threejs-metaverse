@@ -37,7 +37,7 @@ export class CharacterLocomotion{
         this.currentAction.reset().fadeIn(0.2).play();
     }
 
-    update(camera, delta){
+    update(camera, delta, colliders, scene){
 
         let direction = new THREE.Vector2(0,0);
         const velocity = 0.02;
@@ -74,7 +74,25 @@ export class CharacterLocomotion{
             this.playAnimation('idle');
         }
 
-        this.character.position.addScaledVector(moveDirection, velocity);
+        //raycasting
+        let blocked = false;
+        let pos = new THREE.Vector3(this.character.position.x,this.character.position.y,this.character.position.z);
+        pos.y +=0.4;
+        let raycaster = new THREE.Raycaster(pos, moveDirection);
+
+        if(colliders){
+            const intersect = raycaster.intersectObjects(colliders);
+            if(intersect.length>0 && intersect[0].distance<0.2){
+                blocked = true;
+            }
+        }
+        //const arrowHelper = new THREE.ArrowHelper(moveDirection, pos, 1, 0xff0000);
+        //scene.add(arrowHelper);
+
+        if(!blocked){
+            this.character.position.addScaledVector(moveDirection, velocity);
+        }
+
         this.mixer.update(delta);
     }
 }
